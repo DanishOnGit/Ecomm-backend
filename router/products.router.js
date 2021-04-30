@@ -83,7 +83,6 @@ router
   .post(async (req, res) => {
     try {
       let { product } = req;
-      // const {productId} = req.params
       const updateProduct = req.body;
       product = extend(product, updateProduct);
       await product.save();
