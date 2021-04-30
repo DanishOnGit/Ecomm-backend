@@ -26,9 +26,7 @@ router
     try {
       const passedProduct = req.body;
 
-      const result = await WishlistItem.findOne({
-        _id: "60894cbb25ed850340db285f",
-      });
+      const result = await WishlistItem.findOne({});
 
       for (let product of result.wishlistItems) {
         if (product.productId == passedProduct._id) {
