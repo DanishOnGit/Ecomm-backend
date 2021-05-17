@@ -10,12 +10,10 @@ router
       const products = await Product.find({});
       res.json({ success: true, products });
     } catch (err) {
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Couldnt fetch request, try again !",
-        });
+      res.status(500).json({
+        success: false,
+        message: "Couldnt fetch request, try again !",
+      });
     }
   })
   .post(async (req, res) => {
@@ -27,13 +25,11 @@ router
       res.json({ success: true, NewProduct });
     } catch (err) {
       console.log(err.stack);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Unable to add product!",
-          errMessage: err.message,
-        });
+      res.status(500).json({
+        success: false,
+        message: "Unable to add product!",
+        errMessage: err.message,
+      });
     }
   });
 
@@ -41,23 +37,19 @@ router.param("productId", async (req, res, next, id) => {
   try {
     const product = await Product.findById({ _id: id });
     if (!product) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "No Product found associated, please check the user id!",
-        });
+      return res.status(404).json({
+        success: false,
+        message: "No Product found associated, please check the user id!",
+      });
     }
     req.product = product;
     next();
   } catch (err) {
-    res
-      .status(404)
-      .json({
-        success: false,
-        message: "No Product found associated, please check the user id!",
-        errMessage: err.message,
-      });
+    res.status(404).json({
+      success: false,
+      message: "No Product found associated, please check the user id!",
+      errMessage: err.message,
+    });
   }
 });
 
@@ -71,13 +63,11 @@ router
         return res.json({ success: true, product });
       }
     } catch (err) {
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Could not fetch the desired product!",
-          errMessage: err.message,
-        });
+      res.status(500).json({
+        success: false,
+        message: "Could not fetch the desired product!",
+        errMessage: err.message,
+      });
     }
   })
   .post(async (req, res) => {
@@ -88,13 +78,11 @@ router
       await product.save();
       res.json({ success: true, product });
     } catch (err) {
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Could not update the desired product!",
-          errMessage: err.message,
-        });
+      res.status(500).json({
+        success: false,
+        message: "Could not update the desired product!",
+        errMessage: err.message,
+      });
     }
   })
   .delete(async (req, res) => {
@@ -103,13 +91,11 @@ router
       await product.remove();
       res.json({ success: true, message: "product removed", products });
     } catch (err) {
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: "Could not delete the desired product!",
-          errMessage: err.message,
-        });
+      res.status(500).json({
+        success: false,
+        message: "Could not delete the desired product!",
+        errMessage: err.message,
+      });
     }
   });
 

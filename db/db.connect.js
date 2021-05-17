@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const mySecret = process.env["DB_key"];
+const mySecret = process.env["DB_KEY"];
 
 async function initializeDBConnection() {
   try {
@@ -10,7 +10,7 @@ async function initializeDBConnection() {
     );
     console.log("connection succesffulll, maza aa gaya");
   } catch (err) {
-    console.error("mongoose conncection failed....");
+    console.error("mongoose connection failed....");
   }
 }
 
