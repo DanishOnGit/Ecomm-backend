@@ -10,7 +10,8 @@ const watchLaterSchema = new mongoose.Schema({
   videoId:{
    type: mongoose.Schema.Types.ObjectId,
    ref:"Video"
-  }
+  },
+  existsInWatchLater:Boolean
 });
 
 const WatchLater = mongoose.model("WatchLaterVideo", watchLaterSchema);

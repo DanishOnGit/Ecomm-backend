@@ -10,7 +10,8 @@ const likedVideosSchema = new mongoose.Schema({
  videoId:{
   type: mongoose.Schema.Types.ObjectId,
   ref:"Video"
- }
+ },
+ existsInLikedVideos:Boolean
 });
 
 const LikedVideos = mongoose.model("LikedVideo", likedVideosSchema);

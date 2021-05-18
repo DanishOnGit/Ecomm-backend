@@ -3,9 +3,13 @@ const { Video } = require("./video.model");
 const { User } = require("./user.model");
 
 const noteSchema = new mongoose.Schema({
-  content: {
-    type: String,
-    required: true,
+  title:{
+    type:String,
+    required:true
+  },
+  desc:{
+    type:String,
+    required:true
   },
   byId: {
     type: mongoose.Schema.Types.ObjectId,
