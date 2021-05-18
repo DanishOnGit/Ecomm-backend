@@ -3,16 +3,14 @@ const { Video } = require("./video.model");
 const { User } = require("./user.model");
 
 const likedVideosSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  likedVideos: [
-    {
-      videoId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Video",
-      },
-      existsInLikedVideos: Boolean,
-    },
-  ],
+ byId:{
+   type: mongoose.Schema.Types.ObjectId,
+   ref:"User"
+ },
+ videoId:{
+  type: mongoose.Schema.Types.ObjectId,
+  ref:"Video"
+ }
 });
 
 const LikedVideos = mongoose.model("LikedVideo", likedVideosSchema);

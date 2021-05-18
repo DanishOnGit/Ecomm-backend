@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
-
+const { Video } = require("./video.model");
 const userSchema = new mongoose.Schema(
   {
-    // name:{
-    //   type: String,
-    //   required: "First name is required!"
-    // },
+    name: {
+      type: String,
+      required: "First name is required!",
+    },
     email: {
       type: String,
       unique: "This email already exists!",
@@ -23,10 +23,36 @@ const userSchema = new mongoose.Schema(
         );
       },
     },
-    //  createdAt: {
-    //   type: Date,
-    //   default: Date.now()
-    // }
+    watchHistory: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Video",
+      },
+    ],
+    likedVideos: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "LikedVideo",
+      },
+    ],
+    watchLater: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "WatchLaterVideo",
+      },
+    ],
+    playlists: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Playlist",
+      },
+    ],
+    notes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Note",
+      },
+    ],
   },
   {
     timeStamps: true,
