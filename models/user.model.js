@@ -25,34 +25,43 @@ const userSchema = new mongoose.Schema(
     },
     watchHistory: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Video",
+        videoId: {
+          type: String,
+          ref: "Video",
+        },
+        createdAt: {
+          type: String,
+        },
       },
     ],
     likedVideos: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "LikedVideo",
+        videoId: {
+          type: String,
+          ref: "Video",
+        },
+        createdAt: {
+          type: String,
+        },
       },
     ],
     watchLater: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "WatchLaterVideo",
+        videoId: {
+          type: String,
+          ref: "Video",
+        },
+        createdAt: {
+          type: String,
+        },
       },
     ],
-    playlists: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Playlist",
-      },
-    ],
-    notes: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Note",
-      },
-    ],
+    // notes: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Note",
+    //   },
+    // ],
   },
   {
     timeStamps: true,

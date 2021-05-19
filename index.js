@@ -7,7 +7,8 @@ const cartRouter = require("./router/cart.router");
 const wishlistRouter = require("./router/wishlist.router");
 const videosRouter = require("./router/videos.router");
 const likedVideosRouter = require("./router/likedVideos.router");
-// const watchLaterRouter = require("./router/watchLater.router");
+const watchLaterRouter = require("./router/watchLater.router");
+const watchHistoryRouter = require("./router/watchHistory.router");
 const playlistsRouter = require("./router/playlists.router");
 const usersRouter = require("./router/users.router");
 const bodyParser = require("body-parser");
@@ -28,7 +29,8 @@ app.use("/wishlist", wishlistRouter);
 app.use("/users", usersRouter)
 app.use("/videos", videosRouter)
 app.use("/likedVideos", likedVideosRouter)
-// app.use("/watchLater",watchLaterRouter)
+app.use("/watchLater",watchLaterRouter)
+app.use("/watchHistory",watchHistoryRouter)
 app.use("/playlists", playlistsRouter)
 
 app.get("/", (req, res) => {

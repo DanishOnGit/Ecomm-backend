@@ -29,7 +29,48 @@ router.route("/").post(async (req, res) => {
     });
   }
 });
+router.route("/:userId").get(async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId);
+    await user
+      .populate("likedVideos.videoId")
+      .populate("watchLater.videoId")
+      .populate("watchHistory.videoId")
+      .execPopulate();
 
+    return res.status(200).json({
+      success: true,
+      likedVideos: user.likedVideos,
+      watchLaterVideos: user.watchLater,
+      watchHistoryVideos: user.watchHistory,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: err.message,
+    });
+  }
+});
+
+router.route("/:userId/playlists").get(async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const result = await Playlist.find({ userId });
+    const playlists = await result
+      .populate("listVideos.videoId")
+      .execPopulate();
+
+    res.status(200).json({ success: true, playlists });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: "Could not fetch your request",
+      errMessage: err.message,
+    });
+  }
+});
 router.route("/authenticate").post(checkAuthentication);
 
 module.exports = router;
