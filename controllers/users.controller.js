@@ -4,7 +4,7 @@ const checkAuthentication = async (req, res) => {
   try {
     const email = req.get("email");
     const password = req.get("password");
-    console.log(email, password);
+   
     const user = await User.findOne({ email: email });
     console.log("user is..", user);
     if (!user) {
@@ -12,11 +12,7 @@ const checkAuthentication = async (req, res) => {
         .status(401)
         .json({ success: false, message: "Email not exists!" });
     } else if (user.password === password) {
-      // await user
-      //   .populate("likedVideos.videoId")
-      //   .populate("watchLater.videoId")
-      //   .populate("watchHistory.videoId")
-      //   .execPopulate();
+      
 
       return res.status(200).json({
         success: true,

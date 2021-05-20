@@ -10,6 +10,7 @@ const likedVideosRouter = require("./router/likedVideos.router");
 const watchLaterRouter = require("./router/watchLater.router");
 const watchHistoryRouter = require("./router/watchHistory.router");
 const playlistsRouter = require("./router/playlists.router");
+const notesRouter = require("./router/notes.router");
 const usersRouter = require("./router/users.router");
 const bodyParser = require("body-parser");
 const errorHandler = require("./middlewares/error-handler");
@@ -32,6 +33,7 @@ app.use("/likedVideos", likedVideosRouter)
 app.use("/watchLater",watchLaterRouter)
 app.use("/watchHistory",watchHistoryRouter)
 app.use("/playlists", playlistsRouter)
+app.use("/notes",notesRouter)
 
 app.get("/", (req, res) => {
   res.send("Hello Express app!");
