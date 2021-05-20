@@ -1,6 +1,6 @@
 const express = require("express");
 const { User } = require("../models/user.model");
-const {Playlist}=require("../models/playlist.model");
+const { Playlist } = require("../models/playlist.model");
 const router = express.Router();
 const checkAuthentication = require("../controllers/users.controller");
 
@@ -58,9 +58,11 @@ router.route("/:userId").get(async (req, res) => {
 router.route("/:userId/playlists").get(async (req, res) => {
   try {
     const { userId } = req.params;
-    const result = await Playlist.find({ userId }).populate("listVideos.videoId");
+    const result = await Playlist.find({ userId }).populate(
+      "listVideos.videoId"
+    );
 
-    res.status(200).json({ success: true, playlists:result });
+    res.status(200).json({ success: true, playlists: result });
   } catch (err) {
     res.status(500).json({
       success: false,

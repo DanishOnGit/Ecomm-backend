@@ -21,7 +21,6 @@ router
   .post(async (req, res) => {
     try {
       const userAndVideoDetails = req.body;
-      console.log({ userAndVideoDetails });
       const result = await User.findOne({ _id: userAndVideoDetails.userId });
 
       if (
@@ -44,7 +43,6 @@ router
         .populate({ path: "watchLater.videoId" })
         .execPopulate();
 
-      console.log("Is populated?");
       res
         .status(201)
         .json({ success: true, watchLaterVideos: user.watchLater });

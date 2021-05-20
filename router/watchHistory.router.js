@@ -21,7 +21,6 @@ router
   .post(async (req, res) => {
     try {
       const userAndVideoDetails = req.body;
-      console.log({ userAndVideoDetails });
       const result = await User.findOne({ _id: userAndVideoDetails.userId });
 
       if (
@@ -44,7 +43,6 @@ router
         .populate({ path: "watchHistory.videoId" })
         .execPopulate();
 
-      
       res
         .status(201)
         .json({ success: true, watchHistoryVideos: user.watchHistory });
@@ -57,32 +55,5 @@ router
       });
     }
   });
-// .delete(async (req, res) => {
-//   try {
-//     const userAndVideoDetails = req.body;
-//     console.log({ userAndVideoDetails });
-//     const result = await User.findOne({ _id: userAndVideoDetails.userId });
-
-//     result.watchHistory= result.watchHistory.filter(video=>video.videoId!==userAndVideoDetails.videoId)
-//     const savedItem = await result.save();
-//     const user = await savedItem
-//       .populate({ path: "watchHistory.videoId" })
-//       .execPopulate();
-
-//     console.log("Is populated?");
-//     res
-//       .status(200)
-//       .json({ success: true, watchHistoryVideos: user.watchHistory });
-
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .json({
-//         success: false,
-//         message: "Unable to delete",
-//         errMessage: err.message,
-//       });
-//   }
-// });
 
 module.exports = router;

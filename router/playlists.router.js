@@ -1,9 +1,7 @@
 const express = require("express");
 const { extend } = require("lodash");
 const { Playlist } = require("../models/playlist.model");
-const { User } = require("../models/user.model");
 const router = express.Router();
-const { Video } = require("../models/video.model");
 
 router.param("playlistId", async (req, res, next, id) => {
   try {
@@ -45,17 +43,16 @@ router
   .route("/:playlistId")
   .post(async (req, res) => {
     try {
-      // const { playlistId } = req.params;
       const playlistsUpdates = req.body;
-      let {playlistFromDb}=req;
-      // let playlistFromDb = await Playlist.findById(playlistId);
+      let { playlistFromDb } = req;
       playlistFromDb = extend(playlistFromDb, playlistsUpdates);
       playlistFromDb = await playlistFromDb.save();
-      const updatedPlaylist = await playlistFromDb.populate(
-        "listVideos.videoId"
-      ).execPopulate();
+      const updatedPlaylist = await playlistFromDb
+        .populate("listVideos.videoId")
+        .execPopulate();
       res.status(200).json({ success: true, playlist: updatedPlaylist });
     } catch (err) {
+      console.log(err);
       res.status(500).json({
         success: false,
         message:
@@ -66,13 +63,11 @@ router
   })
   .delete(async (req, res) => {
     try {
-      let{playlistFromDb} = req ;
+      let { playlistFromDb } = req;
       await playlistFromDb.remove();
-      // const { playlistId } = req.params;
-      // let playlistFromDb = await Playlist.findById(playlistId);
-      // const updatedPlaylist = await Playlist.remove({ _id: playlistId });
       res.status(200).json({ success: true, playlist: playlistFromDb });
     } catch (err) {
+      console.log(err);
       res.status(500).json({
         success: false,
         message:
@@ -83,10 +78,8 @@ router
   });
 router.route("/:playlistId/videos").post(async (req, res) => {
   try {
-    // const { playlistId } = req.params;
     const videoDetails = req.body;
-    let {playlistFromDb}=req
-    // let playlistFromDb = await Playlist.findById(playlistId);
+    let { playlistFromDb } = req;
 
     if (
       playlistFromDb.listVideos.find(
@@ -104,9 +97,12 @@ router.route("/:playlistId/videos").post(async (req, res) => {
     }
 
     const savedItem = await playlistFromDb.save();
-    const updatedPlaylist = await savedItem.populate("listVideos.videoId").execPopulate();
+    const updatedPlaylist = await savedItem
+      .populate("listVideos.videoId")
+      .execPopulate();
     res.status(201).json({ success: true, playlist: updatedPlaylist });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       success: false,
       message: "Request failed please check errorMessage key for more details",
