@@ -33,7 +33,7 @@ const checkAuthentication = async (req, res) => {
     const password = req.get("password");
 
     const user = await User.findOne({ email: email });
-    console.log("user is..", user);
+    
     if (!user) {
       return res
         .status(401)
