@@ -11,6 +11,7 @@ const getPlaylistByIdFromDb = async (req, res, next, id) => {
         res.status(404).json({ success: false, message: "Playlist not found" });
       }
     } catch (err) {
+      console.log(err)
       res.status(404).json({
         success: false,
         message: "Something went wrong",
@@ -30,6 +31,7 @@ const getPlaylistByIdFromDb = async (req, res, next, id) => {
         playlist: createdPlaylist,
       });
     } catch (err) {
+      console.log(err)
       res.status(500).json({
         success: false,
         message: "Request failed please check errorMessage key for more details",
@@ -75,7 +77,7 @@ const getPlaylistByIdFromDb = async (req, res, next, id) => {
       } else {
         playlistFromDb.listVideos.push({
           videoId: videoDetails.videoId,
-          createdAt: new Date().toDateString(),
+          addedAt: new Date().toDateString(),
         });
       }
   

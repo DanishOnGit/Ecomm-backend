@@ -19,6 +19,7 @@ const createNewUser = async (req, res) => {
       .status(201)
       .json({ success: true, message: "User created successfully." });
   } catch (err) {
+    console.log(err)
     res.status(500).json({
       success: false,
       message: "Request failed please check errorMessage key for more details",
@@ -46,6 +47,7 @@ const checkAuthentication = async (req, res) => {
     }
     res.status(401).json({ success: false, message: "Password is incorrect" });
   } catch (err) {
+    console.log(err)
     res.status(500).json({
       success: false,
       message: "Request failed please check errorMessage key for more details",
@@ -73,6 +75,7 @@ const getUserFromDb = async (req, res) => {
       watchHistoryVideos: user.watchHistory,
     });
   } catch (err) {
+    console.log(err)
     res.status(500).json({
       success: false,
       message: "Request failed please check errorMessage key for more details",
@@ -90,6 +93,7 @@ const getUserPlaylists = async (req, res) => {
 
     res.status(200).json({ success: true, playlists: result });
   } catch (err) {
+    console.log(err)
     res.status(500).json({
       success: false,
       message: "Could not fetch your request",

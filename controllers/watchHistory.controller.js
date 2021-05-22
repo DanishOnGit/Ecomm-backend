@@ -7,6 +7,7 @@ const getWatchHistoryVideos = async (req, res) => {
         .status(200)
         .json({ success: true, watchHistoryVideos: result.watchHistory });
     } catch (err) {
+      console.log(err)
       res.status(500).json({
         success: false,
         message: "Could not fetch your watchHistory videos",
@@ -31,7 +32,7 @@ const getWatchHistoryVideos = async (req, res) => {
       } else {
         result.watchHistory.push({
           videoId: userAndVideoDetails.videoId,
-          createdAt: new Date().toDateString(),
+          addedAt: new Date().toDateString(),
         });
       }
 

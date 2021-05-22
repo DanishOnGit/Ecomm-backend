@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 const { Video } = require("./video.model");
-
-const playlistSchema = new mongoose.Schema(
+const {Schema} = mongoose;
+const playlistSchema = new Schema(
   {
     listName: {
       type: String,
       required: true,
     },
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
     },
     listVideos: [
@@ -17,12 +17,12 @@ const playlistSchema = new mongoose.Schema(
           type: String,
           ref: "Video",
         },
-        createdAt: String,
+        addedAt: String,
       },
     ],
   },
   {
-    timeStamps: true,
+    timestamps: true,
   }
 );
 

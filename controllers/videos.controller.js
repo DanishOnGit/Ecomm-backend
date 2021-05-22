@@ -5,6 +5,7 @@ const getAllVideos = async (req, res) => {
     const videos = await Video.find({});
     res.status(200).json({ success: true, videos });
   } catch (err) {
+    console.log(err)
     res.status(500).json({
       success: false,
       message: "Couldnt fetch request, try again !",
@@ -30,7 +31,7 @@ const addNewVideo = async (req, res) => {
 
 const getVideoByIdFromDb = async (req, res, next, id) => {
   try {
-    const video = await Video.findById({ _id: id });
+    const video = await Video.findById(id);
 
     if (!video) {
       return res.status(404).json({
@@ -41,6 +42,7 @@ const getVideoByIdFromDb = async (req, res, next, id) => {
     req.video = video;
     next();
   } catch (err) {
+    console.log(err)
     res.status(500).json({
       success: false,
       message: "No video found associated, please check the video id!",
@@ -55,6 +57,7 @@ const getVideoDetails = async (req, res) => {
     video.__v = undefined;
     return res.json({ success: true, video });
   } catch (err) {
+    console.log(err)
     res.status(500).json({
       success: false,
       message: "Could not fetch the desired video!",

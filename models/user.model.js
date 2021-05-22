@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const { Video } = require("./video.model");
-const userSchema = new mongoose.Schema(
+const {Schema} = mongoose;
+
+const userSchema = new Schema(
   {
     name: {
       type: String,
@@ -29,7 +31,7 @@ const userSchema = new mongoose.Schema(
           type: String,
           ref: "Video",
         },
-        createdAt: {
+        addedAt: {
           type: String,
         },
       },
@@ -40,7 +42,7 @@ const userSchema = new mongoose.Schema(
           type: String,
           ref: "Video",
         },
-        createdAt: {
+        addedAt: {
           type: String,
         },
       },
@@ -51,7 +53,7 @@ const userSchema = new mongoose.Schema(
           type: String,
           ref: "Video",
         },
-        createdAt: {
+        addedAt: {
           type: String,
         },
       },
@@ -59,7 +61,7 @@ const userSchema = new mongoose.Schema(
     
   },
   {
-    timeStamps: true,
+    timestamps: true,
   }
 );
 

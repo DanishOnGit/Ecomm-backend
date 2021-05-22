@@ -8,6 +8,7 @@ const getWatchLaterVideos = async (req, res) => {
         .status(200)
         .json({ success: true, watchLaterVideos: result.watchLater });
     } catch (err) {
+      console.log(err)
       res.status(500).json({
         success: false,
         message: "Could not fetch your watchlater videos",
@@ -33,7 +34,7 @@ const addVideoToWatchLater = async (req, res) => {
       } else {
         result.watchLater.push({
           videoId: userAndVideoDetails.videoId,
-          createdAt: new Date().toDateString(),
+          addedAt: new Date().toDateString(),
         });
       }
 
@@ -46,7 +47,7 @@ const addVideoToWatchLater = async (req, res) => {
         .status(201)
         .json({ success: true, watchLaterVideos: user.watchLater });
     } catch (err) {
-      console.log("error..", err);
+      console.log( err);
       res.status(500).json({
         success: false,
         message: "Unable to fetch req",

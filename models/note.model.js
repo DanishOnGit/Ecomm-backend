@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const { Video } = require("./video.model");
 const { User } = require("./user.model");
-
-const noteSchema = new mongoose.Schema(
+const {Schema} = mongoose;
+const noteSchema = new Schema(
   {
     title: {
       type: String,
@@ -13,7 +13,7 @@ const noteSchema = new mongoose.Schema(
       required: true,
     },
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
     },
     videoId: {
@@ -25,7 +25,7 @@ const noteSchema = new mongoose.Schema(
     },
   },
   {
-    timeStamps: true,
+    timestamps: true,
   }
 );
 
