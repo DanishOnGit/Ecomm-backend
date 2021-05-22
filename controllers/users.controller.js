@@ -62,6 +62,9 @@ const getUserFromDb = async (req, res) => {
   try {
     const { userId } = req.params;
     const user = await User.findById(userId);
+    if(!user){
+      return res.status(404).json({success:false,message:"User Not Found"})
+    }
     await user
       .populate("likedVideos.videoId")
       .populate("watchLater.videoId")
