@@ -8,7 +8,7 @@ async function initializeDBConnection() {
       `mongodb+srv://Danny:${mySecret}@neoG-cluster.vfgje.mongodb.net/inventory?retryWrites=true&w=majority`,
       { useNewUrlParser: true, useUnifiedTopology: true }
     );
-    console.log("connection succesffulll, maza aa gaya");
+    console.log("connection succesffulll !");
   } catch (err) {
     console.error("mongoose connection failed....");
   }

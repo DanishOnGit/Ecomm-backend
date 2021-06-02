@@ -12,9 +12,12 @@ const watchHistoryRouter = require("./router/watchHistory.router");
 const playlistsRouter = require("./router/playlists.router");
 const notesRouter = require("./router/notes.router");
 const usersRouter = require("./router/users.router");
+const ecommUsersRouter = require("./router/users-ecomm.router");
 const bodyParser = require("body-parser");
 const errorHandler = require("./middlewares/error-handler");
 const routeNotFound = require("./middlewares/route-not-found");
+const authenticationVerification = require("./middlewares/authentication-verification");
+
 
 const app = express();
 app.use(bodyParser.json());
@@ -23,12 +26,19 @@ initializeDBConnection();
 
 //Ecomm routes
 app.use("/productsListingPage", productsRouter);
+
+//Video lib routes
+app.use("/videos", videosRouter)
+app.use("/users", usersRouter)
+app.use("/users-ecomm",ecommUsersRouter)
+
+app.use(authenticationVerification);
+
+//Ecomm private routes
 app.use("/cart", cartRouter);
 app.use("/wishlist", wishlistRouter);
 
-//Video lib routes
-app.use("/users", usersRouter)
-app.use("/videos", videosRouter)
+//Video Lib private routes
 app.use("/likedVideos", likedVideosRouter)
 app.use("/watchLater",watchLaterRouter)
 app.use("/watchHistory",watchHistoryRouter)

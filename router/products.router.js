@@ -54,7 +54,7 @@ router.param("productId", async (req, res, next, id) => {
 });
 
 router
-  .route("/:productId")
+  .route("/product/:productId")
   .get(async (req, res) => {
     try {
       const { product } = req;
