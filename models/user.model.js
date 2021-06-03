@@ -24,41 +24,7 @@ const userSchema = new Schema(
           value
         );
       },
-    },
-    watchHistory: [
-      {
-        videoId: {
-          type: String,
-          ref: "Video",
-        },
-        addedAt: {
-          type: String,
-        },
-      },
-    ],
-    likedVideos: [
-      {
-        videoId: {
-          type: String,
-          ref: "Video",
-        },
-        addedAt: {
-          type: String,
-        },
-      },
-    ],
-    watchLater: [
-      {
-        videoId: {
-          type: String,
-          ref: "Video",
-        },
-        addedAt: {
-          type: String,
-        },
-      },
-    ],
-    
+    }
   },
   {
     timestamps: true,

@@ -1,57 +1,57 @@
-const {User} = require("../models/user.model")
+const { User } = require("../models/user.model");
 
 const getWatchHistoryVideos = async (req, res) => {
-    try {
-      const result = await User.findOne({}).populate("watchHistory.videoId");
-      res
-        .status(200)
-        .json({ success: true, watchHistoryVideos: result.watchHistory });
-    } catch (err) {
-      console.log(err)
-      res.status(500).json({
-        success: false,
-        message: "Could not fetch your watchHistory videos",
-        errMessage: err.message,
+  try {
+    const { watchHistoryVideos } = req;
+    const result = await watchHistoryVideos
+      .populate("videoList.videoId")
+      .execPopulate();
+    res
+      .status(200)
+      .json({ success: true, watchHistoryVideos: result.videoList });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Could not fetch your watchHistory videos",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const updateWatchHistory = async (req, res) => {
+  try {
+    const { videoId } = req.body;
+    const { watchHistoryVideos } = req;
+
+    if (watchHistoryVideos.videoList.find((item) => item.videoId == videoId)) {
+      watchHistoryVideos.videoList = watchHistoryVideos.videoList.filter(
+        (item) => item.videoId !== videoId
+      );
+    } else {
+      watchHistoryVideos.videoList.push({
+        videoId: videoId,
+        addedAt: new Date().toDateString(),
       });
     }
-  }
 
-  const addVideoToWatchHistory = async (req, res) => {
-    try {
-      const userAndVideoDetails = req.body;
-      const result = await User.findOne({ _id: userAndVideoDetails.userId });
+    const savedItem = await watchHistoryVideos.save();
+    await savedItem.populate("videoList.videoId").execPopulate();
 
-      if (
-        result.watchHistory.find(
-          (item) => item.videoId == userAndVideoDetails.videoId
-        )
-      ) {
-        result.watchHistory = result.watchHistory.filter(
-          (item) => item.videoId !== userAndVideoDetails.videoId
-        );
-      } else {
-        result.watchHistory.push({
-          videoId: userAndVideoDetails.videoId,
-          addedAt: new Date().toDateString(),
-        });
-      }
-
-      const savedItem = await result.save();
-      const user = await savedItem
-        .populate({ path: "watchHistory.videoId" })
-        .execPopulate();
-
-      res
-        .status(201)
-        .json({ success: true, watchHistoryVideos: user.watchHistory });
-    } catch (err) {
-      console.log("error..", err);
-      res.status(500).json({
-        success: false,
-        message: "Unable to fetch req",
-        errMessage: err.message,
+    res
+      .status(201)
+      .json({
+        success: true,
+        watchHistoryVideos: watchHistoryVideos.videoList,
       });
-    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Unable to fetch request",
+      errorMessage: error.message,
+    });
   }
+};
 
-  module.exports = {getWatchHistoryVideos,addVideoToWatchHistory}
+module.exports = { getWatchHistoryVideos, updateWatchHistory };

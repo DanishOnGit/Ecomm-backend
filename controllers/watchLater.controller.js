@@ -1,59 +1,56 @@
-const {User} = require("../models/user.model")
-
+const { User } = require("../models/user.model");
 
 const getWatchLaterVideos = async (req, res) => {
-    try {
-      const result = await User.findOne({}).populate("watchLater.videoId");
-      res
-        .status(200)
-        .json({ success: true, watchLaterVideos: result.watchLater });
-    } catch (err) {
-      console.log(err)
-      res.status(500).json({
-        success: false,
-        message: "Could not fetch your watchlater videos",
-        errMessage: err.message,
-      });
-    }
-  };
-
-
-const addVideoToWatchLater = async (req, res) => {
-    try {
-      const userAndVideoDetails = req.body;
-      const result = await User.findOne({ _id: userAndVideoDetails.userId });
-
-      if (
-        result.watchLater.find(
-          (item) => item.videoId == userAndVideoDetails.videoId
-        )
-      ) {
-        result.watchLater = result.watchLater.filter(
-          (item) => item.videoId !== userAndVideoDetails.videoId
-        );
-      } else {
-        result.watchLater.push({
-          videoId: userAndVideoDetails.videoId,
-          addedAt: new Date().toDateString(),
-        });
-      }
-
-      const savedItem = await result.save();
-      const user = await savedItem
-        .populate({ path: "watchLater.videoId" })
-        .execPopulate();
-
-      res
-        .status(201)
-        .json({ success: true, watchLaterVideos: user.watchLater });
-    } catch (err) {
-      console.log( err);
-      res.status(500).json({
-        success: false,
-        message: "Unable to fetch req",
-        errMessage: err.message,
-      });
-    }
+  try {
+    const { watchLaterVideos } = req;
+    const result = await watchLaterVideos
+      .populate("videoList.videoId")
+      .execPopulate();
+    res.status(200).json({ success: true, watchLaterVideos: result.videoList });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Could not fetch your watchlater videos",
+      errorMessage: error.message,
+    });
   }
+};
 
-  module.exports = {getWatchLaterVideos,addVideoToWatchLater}
+const updateWatchLater = async (req, res) => {
+  try {
+    const {videoId} = req.body;
+    const {watchLaterVideos} = req;
+   
+    if (
+      watchLaterVideos.videoList.find(
+        (item) => item.videoId == videoId
+      )
+    ) {
+      watchLaterVideos.videoList = watchLaterVideos.videoList.filter(
+        (item) => item.videoId !== videoId
+      );
+    } else {
+      watchLaterVideos.videoList.push({
+        videoId: videoId,
+        addedAt: new Date().toDateString(),
+      });
+    }
+
+    const savedItem = await watchLaterVideos.save();
+    await savedItem
+      .populate( "videoList.videoId")
+      .execPopulate();
+
+    res.status(201).json({ success: true, watchLaterVideos:watchLaterVideos.videoList });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Unable to fetch req",
+      errorMessage: error.message,
+    });
+  }
+};
+
+module.exports = { getWatchLaterVideos, updateWatchLater };

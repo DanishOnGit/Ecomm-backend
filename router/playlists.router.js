@@ -5,16 +5,18 @@ const {
   addNewPlaylist,
   updatePlaylistDetails,
   deletePlaylist,
-  addVideoToPlaylist,
+  updatePlaylistVideos,
+  getUserPlaylists
 } = require("../controllers/playlists.controller");
+
 const router = express.Router();
 
 router.param("playlistId", getPlaylistByIdFromDb);
 
-router.route("/").post(addNewPlaylist);
+router.route("/").get(getUserPlaylists).post(addNewPlaylist);
 
 router.route("/:playlistId").post(updatePlaylistDetails).delete(deletePlaylist);
 
-router.route("/:playlistId/videos").post(addVideoToPlaylist);
+router.route("/:playlistId/videos").post(updatePlaylistVideos);
 
 module.exports = router;

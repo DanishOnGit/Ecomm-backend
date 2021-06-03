@@ -4,12 +4,12 @@ const getAllVideos = async (req, res) => {
   try {
     const videos = await Video.find({});
     res.status(200).json({ success: true, videos });
-  } catch (err) {
-    console.log(err)
+  } catch (error) {
+    console.log(error)
     res.status(500).json({
       success: false,
       message: "Couldnt fetch request, try again !",
-      errMsg: err.message,
+      errorMsg: error.message,
     });
   }
 };
@@ -41,12 +41,12 @@ const getVideoByIdFromDb = async (req, res, next, id) => {
     }
     req.video = video;
     next();
-  } catch (err) {
-    console.log(err)
+  } catch (error) {
+    console.log(error)
     res.status(500).json({
       success: false,
       message: "No video found associated, please check the video id!",
-      errMessage: err.message,
+      errorMessage: error.message,
     });
   }
 };
@@ -56,12 +56,12 @@ const getVideoDetails = async (req, res) => {
     const { video } = req;
     video.__v = undefined;
     return res.json({ success: true, video });
-  } catch (err) {
-    console.log(err)
+  } catch (error) {
+    console.log(error)
     res.status(500).json({
       success: false,
       message: "Could not fetch the desired video!",
-      errMessage: err.message,
+      errorMessage: error.message,
     });
   }
 };

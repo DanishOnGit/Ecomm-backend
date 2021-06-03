@@ -1,10 +1,13 @@
 const express = require("express");
 const {
-  addVideoToWatchLater,
+  updateWatchLater,
   getWatchLaterVideos,
 } = require("../controllers/watchLater.controller");
+const getOrCreateWatchLaterVideosList = require("../middlewares/get-or-create-watch-later-videos-list");
 const router = express.Router();
 
-router.route("/").get(getWatchLaterVideos).post(addVideoToWatchLater);
+router.use(getOrCreateWatchLaterVideosList);
+
+router.route("/").get(getWatchLaterVideos).post(updateWatchLater);
 
 module.exports = router;

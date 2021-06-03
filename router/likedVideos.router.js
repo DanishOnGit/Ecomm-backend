@@ -1,10 +1,13 @@
 const express = require("express");
 const {
   getLikedVideos,
-  addVideoToLikedVideos,
+  updateLikedVideos,
 } = require("../controllers/likedVideos.controller");
+const getOrCreateLikedVideosList = require("../middlewares/get-or-create-liked-videos-list");
 const router = express.Router();
 
-router.route("/").get(getLikedVideos).post(addVideoToLikedVideos);
+router.use(getOrCreateLikedVideosList)
+
+router.route("/").get(getLikedVideos).post(updateLikedVideos);
 
 module.exports = router;

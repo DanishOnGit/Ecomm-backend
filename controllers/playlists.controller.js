@@ -1,6 +1,23 @@
 const {Playlist} = require("../models/playlist.model");
 const { extend } = require("lodash");
 
+const getUserPlaylists = async (req, res) => {
+  try {
+    const { userId } = req
+    const result = await Playlist.find({ userId }).populate(
+      "listVideos.videoId"
+    );
+    res.status(200).json({ success: true, playlists: result });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: "Could not fetch your request",
+      errMessage: err.message,
+    });
+  }
+};
+
 const getPlaylistByIdFromDb = async (req, res, next, id) => {
     try {
       const playlistFromDb = await Playlist.findById(id);
@@ -12,7 +29,7 @@ const getPlaylistByIdFromDb = async (req, res, next, id) => {
       }
     } catch (err) {
       console.log(err)
-      res.status(404).json({
+      res.status(500).json({
         success: false,
         message: "Something went wrong",
         errorMessage: error.message,
@@ -23,7 +40,8 @@ const getPlaylistByIdFromDb = async (req, res, next, id) => {
   const addNewPlaylist = async (req, res) => {
     try {
       const playlistData = req.body;
-      const NewPlaylist = new Playlist(playlistData);
+      const {userId}=req;
+      const NewPlaylist = new Playlist({...playlistData,userId});
       const createdPlaylist = await NewPlaylist.save();
       res.status(201).json({
         success: true,
@@ -61,7 +79,7 @@ const getPlaylistByIdFromDb = async (req, res, next, id) => {
     }
   }
 
-  const addVideoToPlaylist = async (req, res) => {
+  const updatePlaylistVideos = async (req, res) => {
     try {
       const videoDetails = req.body;
       let { playlistFromDb } = req;
@@ -112,6 +130,6 @@ const getPlaylistByIdFromDb = async (req, res, next, id) => {
     }
   }
 
-  module.exports = {getPlaylistByIdFromDb,addNewPlaylist,updatePlaylistDetails,deletePlaylist,addVideoToPlaylist}
+  module.exports = {getUserPlaylists ,getPlaylistByIdFromDb,addNewPlaylist,updatePlaylistDetails,deletePlaylist,updatePlaylistVideos}
 
   

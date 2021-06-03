@@ -1,6 +1,6 @@
 const { CartItem } = require("../models/cart.model");
 
-async function getOrCreateCart(req, res, next) {
+const getOrCreateCart = async (req, res, next)=> {
   try {
     const { userId } = req;
     const result = await CartItem.findOne({ userId });
