@@ -73,56 +73,7 @@ const checkAuthentication = async (req, res) => {
   }
 };
 
-// const getUserFromDb = async (req, res) => {
-//   try {
-//     const { userId } = req.params;
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "User Not Found" });
-//     }
-//     await user
-//       .populate("likedVideos.videoId")
-//       .populate("watchLater.videoId")
-//       .populate("watchHistory.videoId")
-//       .execPopulate();
-
-//     return res.status(200).json({
-//       success: true,
-//       likedVideos: user.likedVideos,
-//       watchLaterVideos: user.watchLater,
-//       watchHistoryVideos: user.watchHistory,
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({
-//       success: false,
-//       message: "Request failed please check errorMessage key for more details",
-//       errorMessage: err.message,
-//     });
-//   }
-// };
-
-
-const getUserCart = async (req, res) => {
-  try {
-    const {userId} = req;
-    const result = await CartItem.findById(userId).populate("cartItems.productId") ;
-    res.status(200).json({ success: true, cartItems: result})
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({
-      success: false,
-      message: "Could not fetch your request",
-      errMessage: err.message,
-    });
-  }
-};
-
 module.exports = {
   checkAuthentication,
   createNewUser,
-  // getUserFromDb,
-
 };
