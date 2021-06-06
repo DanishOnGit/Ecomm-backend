@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const {Schema}  =mongoose;
 
-const EcommUserSchema = new Schema({
+const ecommUserSchema = new Schema({
     name: {
         type: String,
         required: "First name is required!",
@@ -25,6 +25,6 @@ const EcommUserSchema = new Schema({
       },
 })
 
-const EcommUser = mongoose.model("EcommUser",EcommUserSchema);
+const EcommUser = mongoose.model("EcommUser",ecommUserSchema);
 
 module.exports = {EcommUser}

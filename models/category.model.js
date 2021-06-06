@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
 
-const CategorySchema = new Schema({
+const categorySchema = new Schema({
     categoryType:String,
     categoryImage:String,
     quizzes:[
@@ -12,3 +12,7 @@ const CategorySchema = new Schema({
         }
     ]
 })
+
+const Category = mongoose.model("Category",categorySchema);
+
+module.exports={Category}

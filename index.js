@@ -13,6 +13,7 @@ const playlistsRouter = require("./router/playlists.router");
 const notesRouter = require("./router/notes.router");
 const usersRouter = require("./router/users.router");
 const ecommUsersRouter = require("./router/users-ecomm.router");
+const SocialUsersRouter = require("./router/socialUsers.router");
 const bodyParser = require("body-parser");
 const errorHandler = require("./middlewares/error-handler");
 const routeNotFound = require("./middlewares/route-not-found");
@@ -31,6 +32,7 @@ app.use("/productsListingPage", productsRouter);
 app.use("/videos", videosRouter)
 app.use("/users", usersRouter)
 app.use("/users-ecomm",ecommUsersRouter)
+app.use("/users-social",SocialUsersRouter)
 
 app.use(authenticationVerification);
 
