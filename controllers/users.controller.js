@@ -1,6 +1,7 @@
 const { User } = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { SocialUser } = require("../models/user-sm.model");
 const mySecret = process.env.JWT_KEY;
 
 const createNewUser = async (req, res) => {
@@ -43,9 +44,10 @@ const checkAuthentication = async (req, res) => {
 
     if (!user) {
       return res
-        .status(401)
+        .status(404)
         .json({ success: false, message: "Email not exists!" });
     }
+
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (validPassword) {

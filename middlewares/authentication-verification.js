@@ -3,8 +3,8 @@ const mySecret = process.env.JWT_KEY;
 
 function authenticationVerification(req, res, next) {
   try {
-    const userToken = req.get("userToken");
-    const decoded = jwt.verify(userToken, mySecret);
+    const Authorization = req.get("Authorization");
+    const decoded = jwt.verify(Authorization, mySecret);
     req.userId = decoded.userId;
     next();
   } catch (err) {

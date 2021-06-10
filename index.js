@@ -14,6 +14,7 @@ const notesRouter = require("./router/notes.router");
 const usersRouter = require("./router/users.router");
 const ecommUsersRouter = require("./router/users-ecomm.router");
 const SocialUsersRouter = require("./router/socialUsers.router");
+const PostsRouter = require("./router/posts.router");
 const bodyParser = require("body-parser");
 const errorHandler = require("./middlewares/error-handler");
 const routeNotFound = require("./middlewares/route-not-found");
@@ -25,16 +26,18 @@ app.use(bodyParser.json());
 app.use(cors());
 initializeDBConnection();
 
-//Ecomm routes
+//open routes
 app.use("/productsListingPage", productsRouter);
-
-//Video lib routes
 app.use("/videos", videosRouter)
 app.use("/users", usersRouter)
 app.use("/users-ecomm",ecommUsersRouter)
-app.use("/users-social",SocialUsersRouter)
+app.use("/users-social",SocialUsersRouter);
+
 
 app.use(authenticationVerification);
+
+//social media private routes
+app.use("/posts",PostsRouter);
 
 //Ecomm private routes
 app.use("/cart", cartRouter);

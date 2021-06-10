@@ -6,6 +6,7 @@ const socialUserSchema = new Schema(
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      unique:"userId should be unique",
       required: true,
     },
     userName: {
