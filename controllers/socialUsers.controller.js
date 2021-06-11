@@ -7,7 +7,7 @@ const mySecret = process.env.JWT_KEY;
 const createUserInSocialAndUsers = async (req, res) => {
   try {
     const userData = req.body;
-    console.log({userData})
+    console.log({ userData });
     const user = await User.findOne({ email: userData.email });
     if (user) {
       res.status(409).json({
@@ -144,8 +144,6 @@ const checkAuthenticationSocial = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Request failed please check errorMessage key for more details",
-      userDetails: { email: email, password: password },
-
       errorMessage: error.message,
     });
   }
@@ -168,8 +166,6 @@ const getUserProfile = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Request failed please check errorMessage key for more details",
-      userDetails: { email: email, password: password },
-
       errorMessage: error.message,
     });
   }
@@ -186,21 +182,78 @@ const editUserProfile = async (req, res) => {
     socialUser.userName = updatedData.newUserName;
     socialUser.bio = updatedData.newBio;
     await socialUser.save();
-    res
-      .status(200)
-      .json({
-        success: true,
-        name: user?.name,
-        userName: socialUser?.userName,
-        bio: socialUser?.bio,
-      });
+    res.status(200).json({
+      success: true,
+      name: user?.name,
+      userName: socialUser?.userName,
+      bio: socialUser?.bio,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
       message: "Request failed please check errorMessage key for more details",
-      userDetails: { email: email, password: password },
+      errorMessage: error.message,
+    });
+  }
+};
 
+const getFollowersAndFollowingList = async (req, res) => {
+  try {
+    const { userId } = req;
+    const socialUser = await SocialUser.findOne({ userId });
+    if (socialUser) {
+      return res
+        .status(200)
+        .json({
+          success: true,
+          followers: socialUser.followers,
+          following: socialUser.following,
+        });
+    }
+    res.status(404).json({success:false,message:"User's Social media profile not exists!"})
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const updateFollowersAndFollowingList = async (req, res) => {
+  try {
+    const { userId } = req;
+    const userDetails = req.body;
+    //Add user to my following list
+    const socialUser = await SocialUser.findOne({ userId });
+    if (
+      socialUser.following.find((id) => id == userDetails.userId.toString())
+    ) {
+      socialUser.following.filter((id) => id != userDetails.userId.toString());
+    } else {
+      socialUser.following.unshift(userDetails.userId);
+    }
+    await socialUser.save();
+
+    //Add me to user's followers list
+    const user = await SocialUser.findById(userDetails.userId);
+    if (user && user.followers.find((id) => id == socialUser._id.toString())) {
+      user.followers.filter((id) => id != socialUser._id.toString());
+    } else {
+      user.followers.unshift(socialUser._id);
+    }
+    await user.save();
+
+    res
+      .status(201)
+      .json({ success: true, idFollowed:userDetails.userId });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Request failed please check errorMessage key for more details",
       errorMessage: error.message,
     });
   }
@@ -213,4 +266,6 @@ module.exports = {
   checkUserShuttleArcCredentials,
   getUserProfile,
   editUserProfile,
+  getFollowersAndFollowingList,
+  updateFollowersAndFollowingList,
 };

@@ -1,5 +1,5 @@
 const express = require("express");
-const { createUserInSocialAndUsers, createUserInSocial,checkAuthenticationSocial, checkUserShuttleArcCredentials, getUserProfile, editUserProfile} = require("../controllers/socialUsers.controller");
+const { createUserInSocialAndUsers, createUserInSocial,checkAuthenticationSocial, checkUserShuttleArcCredentials, getUserProfile, editUserProfile, updateFollowersAndFollowingList, getFollowersAndFollowingList} = require("../controllers/socialUsers.controller");
 const authenticationVerification = require("../middlewares/authentication-verification");
 const router =  express.Router();
 
@@ -12,5 +12,7 @@ router.route("/shuttlearc-signup").post(createUserInSocial)
 router.route("/signup").post(createUserInSocialAndUsers)
 
 router.route("/profile").get(authenticationVerification,getUserProfile).post(authenticationVerification,editUserProfile)
+
+router.route("/following").get(authenticationVerification,getFollowersAndFollowingList).post(authenticationVerification,updateFollowersAndFollowingList)
 
 module.exports=router
