@@ -3,7 +3,7 @@ const { post } = require("../router/posts.router");
 const { SocialUser } = require("../models/user-sm.model");
 
 const modifyPost = (post, user) => {
-  console.log({ post: JSON.stringify(post) });
+  // console.log({ post: JSON.stringify(post) });
   post._doc.isLikedByUser = post.likedBy.includes(user._id);
   // post._doc.name = post.userId.userId.name;
   post.updatedAt = undefined;
@@ -77,7 +77,7 @@ const createPost = async (req, res) => {
       populate: { path: "userId", select: "name" },
     }).execPopulate();
 
-    console.log({ NewPost });
+    // console.log({ NewPost });
     NewPost = modifyPost(NewPost, user);
 
     res.status(201).json({ success: true, post: NewPost });
@@ -95,7 +95,7 @@ const updatePost = async (req, res) => {
   try {
     const { userId } = req;
     const { postId } = req.params;
-    console.log({ userId, postId });
+    // console.log({ userId, postId });
 
     const user = await SocialUser.findOne({ userId });
 

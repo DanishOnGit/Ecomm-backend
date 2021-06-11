@@ -60,7 +60,6 @@ const checkUserAuthentication = async(req,res)=>{
             success: false,
             message: "Request failed please check errorMessage key for more details",
             userDetails: { email: email, password: password },
-            newmsg: "hello",
             errorMessage: err.message,
           });
     }

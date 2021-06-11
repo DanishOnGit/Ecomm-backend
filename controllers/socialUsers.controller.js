@@ -7,6 +7,7 @@ const mySecret = process.env.JWT_KEY;
 const createUserInSocialAndUsers = async (req, res) => {
   try {
     const userData = req.body;
+    console.log({userData})
     const user = await User.findOne({ email: userData.email });
     if (user) {
       res.status(409).json({
@@ -40,7 +41,7 @@ const createUserInSocialAndUsers = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Request failed please check errorMessage key for more details",
-      errorMessage: err.message,
+      errorMessage: error.message,
     });
   }
 };
@@ -71,11 +72,11 @@ const createUserInSocial = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Request failed please check errorMessage key for more details",
-      errorMessage: err.message,
+      errorMessage: error.message,
     });
   }
 };
-const checkUserShuttleArcCredentials = async (req,res) => {
+const checkUserShuttleArcCredentials = async (req, res) => {
   try {
     const email = req.get("email");
     const password = req.get("password");
@@ -97,16 +98,16 @@ const checkUserShuttleArcCredentials = async (req,res) => {
     res.status(500).json({
       success: false,
       message: "Request failed please check errorMessage key for more details",
-      errorMessage: err.message,
+      errorMessage: error.message,
     });
   }
 };
 
-const checkAuthenticationSocial = async (req,res) => {
+const checkAuthenticationSocial = async (req, res) => {
   try {
     const email = req.get("email");
     const password = req.get("password");
-    console.log({email,password})
+    console.log({ email, password });
     const user = await User.findOne({ email: email });
 
     if (!user) {
@@ -132,8 +133,9 @@ const checkAuthenticationSocial = async (req,res) => {
         success: true,
         token,
         userId: isSocialUser._id,
-        name:user.name,
-        userName:isSocialUser.userName
+        name: user.name,
+        userName: isSocialUser.userName,
+        bio: isSocialUser.bio,
       });
     }
     res.status(401).json({ success: false, message: "Password is incorrect" });
@@ -143,7 +145,62 @@ const checkAuthenticationSocial = async (req,res) => {
       success: false,
       message: "Request failed please check errorMessage key for more details",
       userDetails: { email: email, password: password },
-      newmsg: "hello",
+
+      errorMessage: error.message,
+    });
+  }
+};
+
+const getUserProfile = async (req, res) => {
+  try {
+    const { userId } = req;
+    const user = await User.findById(userId);
+    console.log("usr found", user);
+    const socialUser = await SocialUser.findOne({ userId });
+    res.status(200).json({
+      success: true,
+      name: user?.name,
+      userName: socialUser?.userName,
+      bio: socialUser?.bio,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Request failed please check errorMessage key for more details",
+      userDetails: { email: email, password: password },
+
+      errorMessage: error.message,
+    });
+  }
+};
+
+const editUserProfile = async (req, res) => {
+  try {
+    const updatedData = req.body;
+    const { userId } = req;
+    const user = await User.findById(userId);
+    user.name = updatedData.newName;
+    await user.save();
+    const socialUser = await SocialUser.findOne({ userId });
+    socialUser.userName = updatedData.newUserName;
+    socialUser.bio = updatedData.newBio;
+    await socialUser.save();
+    res
+      .status(200)
+      .json({
+        success: true,
+        name: user?.name,
+        userName: socialUser?.userName,
+        bio: socialUser?.bio,
+      });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Request failed please check errorMessage key for more details",
+      userDetails: { email: email, password: password },
+
       errorMessage: error.message,
     });
   }
@@ -154,4 +211,6 @@ module.exports = {
   checkAuthenticationSocial,
   createUserInSocial,
   checkUserShuttleArcCredentials,
+  getUserProfile,
+  editUserProfile,
 };

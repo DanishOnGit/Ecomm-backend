@@ -1,7 +1,6 @@
 const { User } = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { SocialUser } = require("../models/user-sm.model");
 const mySecret = process.env.JWT_KEY;
 
 const createNewUser = async (req, res) => {
@@ -67,7 +66,7 @@ const checkAuthentication = async (req, res) => {
       success: false,
       message: "Request failed please check errorMessage key for more details",
       userDetails: { email: email, password: password },
-      newmsg: "hello",
+      
       errorMessage: err.message,
     });
   }
