@@ -2,6 +2,7 @@ const { SocialUser } = require("../models/user-sm.model");
 const { User } = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { Post } = require("../models/post.model");
 const mySecret = process.env.JWT_KEY;
 
 const createUserInSocialAndUsers = async (req, res) => {
@@ -151,7 +152,30 @@ const checkAuthenticationSocial = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   try {
+    // const { userId } = req;
+    const userDetails = req.body;
+    const {userName} = req.params
+    console.log({userDetails,userName})
+    const user = await User.findById(userDetails.userId._id);
+    const socialUser = await SocialUser.findOne({userName});
+    const posts = await Post.find({userId:socialUser._id})
+    // const socialUser = await SocialUser.findById( userDetails.userId._id );
+    console.log(user,socialUser)
+    res.status(200).json({success:true,name:user.name,socialUser,posts})
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const getBasicUserDetails = async (req, res) => {
+  try {
     const { userId } = req;
+
     const user = await User.findById(userId);
     console.log("usr found", user);
     const socialUser = await SocialUser.findOne({ userId });
@@ -171,7 +195,7 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-const editUserProfile = async (req, res) => {
+const editBasicUserDetails = async (req, res) => {
   try {
     const updatedData = req.body;
     const { userId } = req;
@@ -203,15 +227,18 @@ const getFollowersAndFollowingList = async (req, res) => {
     const { userId } = req;
     const socialUser = await SocialUser.findOne({ userId });
     if (socialUser) {
-      return res
-        .status(200)
-        .json({
-          success: true,
-          followers: socialUser.followers,
-          following: socialUser.following,
-        });
+      return res.status(200).json({
+        success: true,
+        followers: socialUser.followers,
+        following: socialUser.following,
+      });
     }
-    res.status(404).json({success:false,message:"User's Social media profile not exists!"})
+    res
+      .status(404)
+      .json({
+        success: false,
+        message: "User's Social media profile not exists!",
+      });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -246,9 +273,7 @@ const updateFollowersAndFollowingList = async (req, res) => {
     }
     await user.save();
 
-    res
-      .status(201)
-      .json({ success: true, idFollowed:userDetails.userId });
+    res.status(201).json({ success: true, idFollowed: userDetails.userId });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -265,7 +290,8 @@ module.exports = {
   createUserInSocial,
   checkUserShuttleArcCredentials,
   getUserProfile,
-  editUserProfile,
+  getBasicUserDetails,
+  editBasicUserDetails,
   getFollowersAndFollowingList,
   updateFollowersAndFollowingList,
 };

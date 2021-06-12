@@ -1,5 +1,4 @@
 const { Post } = require("../models/post.model");
-const { post } = require("../router/posts.router");
 const { SocialUser } = require("../models/user-sm.model");
 
 const modifyPost = (post, user) => {
@@ -11,20 +10,27 @@ const modifyPost = (post, user) => {
   post.likedBy = undefined;
   return post;
 };
-// const getAllPostsByUser = async (req, res) => {
-//   try {
-//     const { userId } = req;
-//     const result = await Post.find({ userId }).populate("likedBy");
-//     res.status(200).json({ success: true, posts: result });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Request failed please check errorMessage key for more details",
-//       errorMessage: err.message,
-//     });
-//   }
-// };
+const getAllPostsByUser = async (req, res) => {
+  try {
+    const { userId } = req;
+    const socialUser = req.socialUser;
+    
+    const result = await Post.find({ userId: socialUser._id }).populate({
+      path: "userId",
+      select: "userName userId",
+      populate: { path: "userId", select: "name" },
+    });
+    console.log("getAllPostsByUser...", {socialUser,result});
+    res.status(200).json({ success: true, posts: result });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: err.message,
+    });
+  }
+};
 
 const getAllPosts = async (req, res) => {
   try {
@@ -101,7 +107,9 @@ const updatePost = async (req, res) => {
 
     let post = await Post.findById(postId);
 
-   const isAlreadyLikedByUser = post.likedBy.find((id) => id == user._id.toString());
+    const isAlreadyLikedByUser = post.likedBy.find(
+      (id) => id == user._id.toString()
+    );
 
     if (isAlreadyLikedByUser) {
       console.log("filter chalra he");
@@ -121,4 +129,4 @@ const updatePost = async (req, res) => {
   }
 };
 
-module.exports = { getAllPosts, createPost, updatePost };
+module.exports = { getAllPosts, getAllPostsByUser, createPost, updatePost };
