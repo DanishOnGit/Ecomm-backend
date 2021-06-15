@@ -4,15 +4,13 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { Post } = require("../models/post.model");
 const mySecret = process.env.JWT_KEY;
-// async function hasSocialAccount(user) {
-//   const result = await SocialUser.findOne({ userId: user._id });
-//   console.log(!!result);
-//   return !!result;
-// }
+
 const getAllSocialUsers = async (req, res) => {
   try {
-    const { userId } = req;
-    const socialUsers = await SocialUser.find({}).populate({path:"userId",select:"name"});
+    const socialUsers = await SocialUser.find({}).populate({
+      path: "userId",
+      select: "name",
+    });
     const updatedSocialUsers = socialUsers.map((user) => {
       user.followers = undefined;
       user.following = undefined;
@@ -37,7 +35,6 @@ const getAllSocialUsers = async (req, res) => {
 const createUserInSocialAndUsers = async (req, res) => {
   try {
     const userData = req.body;
-    console.log({ userData });
     const user = await User.findOne({ email: userData.email });
     if (user) {
       res.status(409).json({
@@ -91,7 +88,6 @@ const createUserInSocial = async (req, res) => {
     }
     const NewSocialUser = new SocialUser({
       ...userDetails,
-      // userId: userDetails.userId,
     });
     await NewSocialUser.save();
     res
@@ -137,7 +133,6 @@ const checkAuthenticationSocial = async (req, res) => {
   try {
     const email = req.get("email");
     const password = req.get("password");
-    console.log({ email, password });
     const user = await User.findOne({ email: email });
 
     if (!user) {
@@ -163,11 +158,7 @@ const checkAuthenticationSocial = async (req, res) => {
         success: true,
         token,
         userId: isSocialUser._id,
-        // name: user.name,
         userName: isSocialUser.userName,
-        // bio: isSocialUser.bio,
-        // followers: isSocialUser.followers,
-        // following: isSocialUser.following,
       });
     }
     res.status(401).json({ success: false, message: "Password is incorrect" });
@@ -183,19 +174,18 @@ const checkAuthenticationSocial = async (req, res) => {
 
 const getUserProfile = async (req, res) => {
   try {
-    // const { userId } = req;
-    const {socialUser}=req;
-    const name = socialUser.userId.name
-    socialUser.userId = undefined
-    // const userDetails = req.body;
-    // const { userName } = req.params;
-    // console.log({ userDetails, userName });
-    // const user = await User.findById(userDetails.userId._id);
-    // const socialUser = await SocialUser.findOne({ userName });
-    const posts = await Post.find({ userId: socialUser._id });
-    // const socialUser = await SocialUser.findById( userDetails.userId._id );
-    // console.log(user, socialUser);
-    res.status(200).json({ success: true,name,socialUser, posts });
+    const { socialUser } = req;
+    const name = socialUser.userId.name;
+    socialUser.userId = undefined;
+    const posts = await Post.find({ userId: socialUser._id })
+      .populate({
+        path: "userId",
+        select: "userName userId",
+        populate: { path: "userId", select: "name" },
+      })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, name, socialUser, posts });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -209,9 +199,7 @@ const getUserProfile = async (req, res) => {
 const getBasicUserDetails = async (req, res) => {
   try {
     const { userId } = req;
-
     const user = await User.findById(userId);
-    console.log("usr found", user);
     const socialUser = await SocialUser.findOne({ userId }).populate({});
     res.status(200).json({
       success: true,
