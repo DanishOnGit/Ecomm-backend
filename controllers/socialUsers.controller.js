@@ -4,6 +4,35 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { Post } = require("../models/post.model");
 const mySecret = process.env.JWT_KEY;
+// async function hasSocialAccount(user) {
+//   const result = await SocialUser.findOne({ userId: user._id });
+//   console.log(!!result);
+//   return !!result;
+// }
+const getAllSocialUsers = async (req, res) => {
+  try {
+    const { userId } = req;
+    const socialUsers = await SocialUser.find({}).populate({path:"userId",select:"name"});
+    const updatedSocialUsers = socialUsers.map((user) => {
+      user.followers = undefined;
+      user.following = undefined;
+      user.bio = undefined;
+      user.createdAt = undefined;
+      user.updatedAt = undefined;
+      user.__v = undefined;
+      return user;
+    });
+
+    res.status(200).json({ success: true, updatedSocialUsers });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
 
 const createUserInSocialAndUsers = async (req, res) => {
   try {
@@ -134,9 +163,11 @@ const checkAuthenticationSocial = async (req, res) => {
         success: true,
         token,
         userId: isSocialUser._id,
-        name: user.name,
+        // name: user.name,
         userName: isSocialUser.userName,
-        bio: isSocialUser.bio,
+        // bio: isSocialUser.bio,
+        // followers: isSocialUser.followers,
+        // following: isSocialUser.following,
       });
     }
     res.status(401).json({ success: false, message: "Password is incorrect" });
@@ -153,15 +184,18 @@ const checkAuthenticationSocial = async (req, res) => {
 const getUserProfile = async (req, res) => {
   try {
     // const { userId } = req;
-    const userDetails = req.body;
-    const {userName} = req.params
-    console.log({userDetails,userName})
-    const user = await User.findById(userDetails.userId._id);
-    const socialUser = await SocialUser.findOne({userName});
-    const posts = await Post.find({userId:socialUser._id})
+    const {socialUser}=req;
+    const name = socialUser.userId.name
+    socialUser.userId = undefined
+    // const userDetails = req.body;
+    // const { userName } = req.params;
+    // console.log({ userDetails, userName });
+    // const user = await User.findById(userDetails.userId._id);
+    // const socialUser = await SocialUser.findOne({ userName });
+    const posts = await Post.find({ userId: socialUser._id });
     // const socialUser = await SocialUser.findById( userDetails.userId._id );
-    console.log(user,socialUser)
-    res.status(200).json({success:true,name:user.name,socialUser,posts})
+    // console.log(user, socialUser);
+    res.status(200).json({ success: true,name,socialUser, posts });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -178,7 +212,7 @@ const getBasicUserDetails = async (req, res) => {
 
     const user = await User.findById(userId);
     console.log("usr found", user);
-    const socialUser = await SocialUser.findOne({ userId });
+    const socialUser = await SocialUser.findOne({ userId }).populate({});
     res.status(200).json({
       success: true,
       name: user?.name,
@@ -233,12 +267,10 @@ const getFollowersAndFollowingList = async (req, res) => {
         following: socialUser.following,
       });
     }
-    res
-      .status(404)
-      .json({
-        success: false,
-        message: "User's Social media profile not exists!",
-      });
+    res.status(404).json({
+      success: false,
+      message: "User's Social media profile not exists!",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -253,12 +285,16 @@ const updateFollowersAndFollowingList = async (req, res) => {
   try {
     const { userId } = req;
     const userDetails = req.body;
+    console.log({ userDetails });
     //Add user to my following list
     const socialUser = await SocialUser.findOne({ userId });
     if (
       socialUser.following.find((id) => id == userDetails.userId.toString())
     ) {
-      socialUser.following.filter((id) => id != userDetails.userId.toString());
+      console.log("Follow unfollow fiilter working");
+      socialUser.following = socialUser.following.filter(
+        (id) => id != userDetails.userId.toString()
+      );
     } else {
       socialUser.following.unshift(userDetails.userId);
     }
@@ -267,7 +303,9 @@ const updateFollowersAndFollowingList = async (req, res) => {
     //Add me to user's followers list
     const user = await SocialUser.findById(userDetails.userId);
     if (user && user.followers.find((id) => id == socialUser._id.toString())) {
-      user.followers.filter((id) => id != socialUser._id.toString());
+      user.followers = user.followers.filter(
+        (id) => id != socialUser._id.toString()
+      );
     } else {
       user.followers.unshift(socialUser._id);
     }
@@ -285,6 +323,7 @@ const updateFollowersAndFollowingList = async (req, res) => {
 };
 
 module.exports = {
+  getAllSocialUsers,
   createUserInSocialAndUsers,
   checkAuthenticationSocial,
   createUserInSocial,

@@ -1,9 +1,11 @@
 const express = require("express");
 const { getAllPosts, getAllPostsByUser } = require("../controllers/posts.controller");
-const { createUserInSocialAndUsers, createUserInSocial,checkAuthenticationSocial, checkUserShuttleArcCredentials, getBasicUserDetails, editBasicUserDetails, updateFollowersAndFollowingList, getFollowersAndFollowingList, getUserProfile} = require("../controllers/socialUsers.controller");
+const { createUserInSocialAndUsers, createUserInSocial,checkAuthenticationSocial, checkUserShuttleArcCredentials, getBasicUserDetails, editBasicUserDetails, updateFollowersAndFollowingList, getFollowersAndFollowingList, getUserProfile, getAllSocialUsers} = require("../controllers/socialUsers.controller");
 const authenticationVerification = require("../middlewares/authentication-verification");
 const { SocialUser } = require("../models/user-sm.model");
 const router =  express.Router();
+
+router.route("/").get(authenticationVerification,getAllSocialUsers)
 
 router.route("/login").post(checkAuthenticationSocial)
 
@@ -19,7 +21,7 @@ router.route("/following").get(authenticationVerification,getFollowersAndFollowi
 
 router.param("userName",async (req,res,next,userName)=>{
     try{
-       const socialUser = await SocialUser.findOne({userName});
+       const socialUser = await SocialUser.findOne({userName}).populate({path:"userId",select:"name"});
        if(socialUser){
            req.socialUser = socialUser
            next();
@@ -28,6 +30,6 @@ router.param("userName",async (req,res,next,userName)=>{
         console.log(error)
     }
 })
-router.route("/:userName/profile").post(authenticationVerification,getUserProfile)
+router.route("/:userName/profile").get(authenticationVerification,getUserProfile)
 
 module.exports=router

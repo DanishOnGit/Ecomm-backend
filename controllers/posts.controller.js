@@ -14,7 +14,6 @@ const getAllPostsByUser = async (req, res) => {
   try {
     const { userId } = req;
     const socialUser = req.socialUser;
-    
     const result = await Post.find({ userId: socialUser._id }).populate({
       path: "userId",
       select: "userName userId",
@@ -102,9 +101,7 @@ const updatePost = async (req, res) => {
     const { userId } = req;
     const { postId } = req.params;
     // console.log({ userId, postId });
-
     const user = await SocialUser.findOne({ userId });
-
     let post = await Post.findById(postId);
 
     const isAlreadyLikedByUser = post.likedBy.find(
@@ -115,12 +112,12 @@ const updatePost = async (req, res) => {
       console.log("filter chalra he");
       post.likedBy = post.likedBy.filter((id) => id != user._id.toString());
     } else {
-      post.likedBy.push(user._id);
+      post.likedBy.unshift(user._id);
     }
     await post.save();
     res.status(201).json({ success: true });
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Request failed please check errorMessage key for more details",
