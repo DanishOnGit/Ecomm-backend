@@ -36,10 +36,11 @@ const createUserInSocialAndUsers = async (req, res) => {
   try {
     const userData = req.body;
     const user = await User.findOne({ email: userData.email });
-    if (user) {
+    if (userData && user) {
       res.status(409).json({
         success: false,
-        message: "User Already exists with this email id. ",
+        status: "error",
+        message: "User Already exists with this email id.",
       });
       return;
     }
@@ -49,6 +50,7 @@ const createUserInSocialAndUsers = async (req, res) => {
     if (socialUser) {
       res.status(409).json({
         success: false,
+        status: "error",
         message: "User Already exists with this user name.",
       });
       return;
@@ -60,13 +62,16 @@ const createUserInSocialAndUsers = async (req, res) => {
     const NewSocialUser = new SocialUser({ ...userData, userId: NewUser._id });
     await NewSocialUser.save();
 
-    res
-      .status(201)
-      .json({ success: true, message: "User created successfully." });
+    res.status(201).json({
+      success: true,
+      status: "success",
+      message: "Account created successfully.",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
+      status: "error",
       message: "Request failed please check errorMessage key for more details",
       errorMessage: error.message,
     });
@@ -79,9 +84,10 @@ const createUserInSocial = async (req, res) => {
     const socialUser = await SocialUser.findOne({
       userName: userDetails.userName,
     });
-    if (socialUser) {
+    if (userDetails && socialUser) {
       res.status(409).json({
         success: false,
+        status: "error",
         message: "Username already exists!Try a different user name.",
       });
       return;
@@ -90,13 +96,16 @@ const createUserInSocial = async (req, res) => {
       ...userDetails,
     });
     await NewSocialUser.save();
-    res
-      .status(201)
-      .json({ success: true, message: "User created successfully." });
+    res.status(201).json({
+      success: true,
+      status: "success",
+      message: "User created successfully.",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
+      status: "error",
       message: "Request failed please check errorMessage key for more details",
       errorMessage: error.message,
     });
@@ -108,21 +117,41 @@ const checkUserShuttleArcCredentials = async (req, res) => {
     const password = req.get("password");
     const user = await User.findOne({ email: email });
     if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Incorrect email or password" });
+      return res.status(404).json({
+        success: false,
+        status: "error",
+        message: "Incorrect email or password",
+      });
     }
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
-      return res
-        .status(404)
-        .json({ success: true, message: "Incorrect email or password" });
+      return res.status(404).json({
+        success: false,
+        status: "error",
+        message: "Incorrect email or password",
+      });
     }
-    res.status(200).json({ success: true, user });
+    const socialUser = await SocialUser.findOne({ userId: user._id });
+    if (socialUser) {
+      return res.status(409).json({
+        success: false,
+        status: "info",
+        message:
+          "A ShuttleArc-socials account already exists with these credentials! Try logging in instead.",
+        user,
+      });
+    }
+    res.status(200).json({
+      success: true,
+      status: "success",
+      message: "Account verified!",
+      user,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
+      status: "error",
       message: "Request failed please check errorMessage key for more details",
       errorMessage: error.message,
     });
@@ -136,15 +165,18 @@ const checkAuthenticationSocial = async (req, res) => {
     const user = await User.findOne({ email: email });
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Email not exists!" });
+      return res.status(401).json({
+        success: false,
+        status: "error",
+        message: "Email not exists!",
+      });
     }
     const isSocialUser = await SocialUser.findOne({ userId: user._id });
 
     if (!isSocialUser) {
       return res.status(404).json({
         success: false,
+        status: "error",
         message: "User not found. Please Sign up!",
       });
     }
@@ -156,12 +188,18 @@ const checkAuthenticationSocial = async (req, res) => {
       });
       return res.status(200).json({
         success: true,
+        status: "success",
+        message: "Login successfull",
         token,
         userId: isSocialUser._id,
         userName: isSocialUser.userName,
       });
     }
-    res.status(401).json({ success: false, message: "Password is incorrect" });
+    res.status(401).json({
+      success: false,
+      status: "error",
+      message: "Password is incorrect",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({

@@ -3,9 +3,10 @@ const { extend } = require("lodash");
 
 const getNotesByUserIdAndVideoId = async (req, res) => {
   try {
-    const userId = req.get("userId");
+    // const userId = req.get("userId");
+    const {userId} = req
     const videoId = req.get("videoId");
-    const notesFromDb = await Note.find({ userId: userId, videoId: videoId });
+    const notesFromDb = await Note.find({ userId, videoId: videoId });
     res.status(200).json({ success: true, notes: notesFromDb });
   } catch (err) {
     console.log(err);
@@ -19,8 +20,9 @@ const getNotesByUserIdAndVideoId = async (req, res) => {
 
 const addNewNote = async (req, res) => {
   try {
+    const {userId}=req
     const noteData = req.body;
-    const NewNote = new Note(noteData);
+    const NewNote = new Note({...noteData,userId});
     const savedNote = await NewNote.save();
     res.status(201).json({ success: true, note: savedNote });
   } catch (err) {

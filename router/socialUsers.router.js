@@ -37,7 +37,6 @@ router
   .get(authenticationVerification, getFollowersAndFollowingList)
   .post(authenticationVerification, updateFollowersAndFollowingList);
 
-  
 router.param("userName", async (req, res, next, userName) => {
   try {
     const socialUser = await SocialUser.findOne({ userName }).populate({

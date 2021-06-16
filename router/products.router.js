@@ -19,9 +19,7 @@ router
   .post(async (req, res) => {
     try {
       const product = req.body;
-
       let NewProduct = await Product.insertMany(product);
-
       res.json({ success: true, NewProduct });
     } catch (err) {
       console.log(err.stack);
