@@ -3,6 +3,8 @@ const { User } = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { Post } = require("../models/post.model");
+const { modifyPost } = require("./posts.controller");
+const { addToFollowNotifications } = require("./notification.controller");
 const mySecret = process.env.JWT_KEY;
 
 const getAllSocialUsers = async (req, res) => {
@@ -215,13 +217,15 @@ const getUserProfile = async (req, res) => {
     const { socialUser } = req;
     const name = socialUser.userId.name;
     socialUser.userId = undefined;
-    const posts = await Post.find({ userId: socialUser._id })
+    let posts = await Post.find({ userId: socialUser._id })
       .populate({
         path: "userId",
         select: "userName userId",
         populate: { path: "userId", select: "name" },
       })
       .sort({ createdAt: -1 });
+
+      posts = posts.map((post) => modifyPost(post, socialUser));
 
     res.status(200).json({ success: true, name, socialUser, posts });
   } catch (error) {
@@ -238,7 +242,7 @@ const getBasicUserDetails = async (req, res) => {
   try {
     const { userId } = req;
     const user = await User.findById(userId);
-    const socialUser = await SocialUser.findOne({ userId }).populate({});
+    const socialUser = await SocialUser.findOne({ userId });
     res.status(200).json({
       success: true,
       name: user?.name,
@@ -282,25 +286,65 @@ const editBasicUserDetails = async (req, res) => {
   }
 };
 
-const getFollowersAndFollowingList = async (req, res) => {
+const getFollowingList = async (req, res) => {
   try {
+    
     const { userId } = req;
-    const socialUser = await SocialUser.findOne({ userId });
+    const socialUser = await SocialUser.findOne({ userId })
+      .populate({
+        path: "following",
+        select: "userName userId",
+        populate: { path: "userId", select: "name" },
+      })
+      .populate({ path: "userId", select: "name" });
     if (socialUser) {
       return res.status(200).json({
         success: true,
-        followers: socialUser.followers,
         following: socialUser.following,
       });
     }
     res.status(404).json({
       success: false,
+      status: "error",
       message: "User's Social media profile not exists!",
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       success: false,
+      status: "error",
+      message: "Request failed please check errorMessage key for more details",
+      errorMessage: error.message,
+    });
+  }
+};
+
+const getFollowersList = async (req, res) => {
+  try {
+    const { userId } = req;
+    const socialUser = await SocialUser.findOne({ userId })
+      .populate({
+        path: "followers",
+        select: "userName userId",
+        populate: { path: "userId", select: "name" },
+      })
+      .populate({ path: "userId", select: "name" });
+    if (socialUser) {
+      return res.status(200).json({
+        success: true,
+        followers: socialUser.followers,
+      });
+    }
+    res.status(404).json({
+      success: false,
+      status: "error",
+      message: "User's Social media profile not exists!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      status: "error",
       message: "Request failed please check errorMessage key for more details",
       errorMessage: error.message,
     });
@@ -313,6 +357,7 @@ const updateFollowersAndFollowingList = async (req, res) => {
     const userDetails = req.body;
     console.log({ userDetails });
     //Add user to my following list
+
     const socialUser = await SocialUser.findOne({ userId });
     if (
       socialUser.following.find((id) => id == userDetails.userId.toString())
@@ -321,13 +366,16 @@ const updateFollowersAndFollowingList = async (req, res) => {
       socialUser.following = socialUser.following.filter(
         (id) => id != userDetails.userId.toString()
       );
+      addToFollowNotifications({actionByUserId:socialUser._id,notifyTo:userDetails.userId,isFollowed:false})
     } else {
       socialUser.following.unshift(userDetails.userId);
+      addToFollowNotifications({actionByUserId:socialUser._id,notifyTo:userDetails.userId,isFollowed:true})
     }
     await socialUser.save();
 
     //Add me to user's followers list
     const user = await SocialUser.findById(userDetails.userId);
+
     if (user && user.followers.find((id) => id == socialUser._id.toString())) {
       user.followers = user.followers.filter(
         (id) => id != socialUser._id.toString()
@@ -357,6 +405,7 @@ module.exports = {
   getUserProfile,
   getBasicUserDetails,
   editBasicUserDetails,
-  getFollowersAndFollowingList,
+  getFollowingList,
+  getFollowersList,
   updateFollowersAndFollowingList,
 };

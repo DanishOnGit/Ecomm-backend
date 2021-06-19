@@ -6,7 +6,7 @@ const getNotesByUserIdAndVideoId = async (req, res) => {
     // const userId = req.get("userId");
     const {userId} = req
     const videoId = req.get("videoId");
-    const notesFromDb = await Note.find({ userId, videoId: videoId });
+    const notesFromDb = await Note.find({ userId, videoId });
     res.status(200).json({ success: true, notes: notesFromDb });
   } catch (err) {
     console.log(err);

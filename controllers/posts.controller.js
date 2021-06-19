@@ -1,5 +1,6 @@
 const { Post } = require("../models/post.model");
 const { SocialUser } = require("../models/user-sm.model");
+const { addToLikeNotifications } = require("./notification.controller");
 
 const modifyPost = (post, user) => {
   post._doc.isLikedByUser = post.likedBy.includes(user._id);
@@ -102,8 +103,11 @@ const updatePost = async (req, res) => {
 
     if (isAlreadyLikedByUser) {
       post.likedBy = post.likedBy.filter((id) => id != user._id.toString());
+     await  addToLikeNotifications({actionByUserId:user._id,postId:postId,notifyTo:post.userId,isLiked:false})
+
     } else {
       post.likedBy.unshift(user._id);
+     await addToLikeNotifications({actionByUserId:user._id,typeOfAction:"Like",postId:postId,notifyTo:post.userId,isLiked:true})
     }
     await post.save();
     res.status(201).json({ success: true });
@@ -117,4 +121,5 @@ const updatePost = async (req, res) => {
   }
 };
 
-module.exports = { getAllPosts, getAllPostsByUser, createPost, updatePost };
+
+module.exports = { getAllPosts, getAllPostsByUser, createPost, updatePost ,modifyPost};
