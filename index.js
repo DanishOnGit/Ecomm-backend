@@ -5,6 +5,7 @@ const { initializeDBConnection } = require("./db/db.connect");
 const productsRouter = require("./router/products.router");
 const cartRouter = require("./router/cart.router");
 const wishlistRouter = require("./router/wishlist.router");
+const ordersRouter = require("./router/orders.router");
 const videosRouter = require("./router/videos.router");
 const likedVideosRouter = require("./router/likedVideos.router");
 const watchLaterRouter = require("./router/watchLater.router");
@@ -12,7 +13,6 @@ const watchHistoryRouter = require("./router/watchHistory.router");
 const playlistsRouter = require("./router/playlists.router");
 const notesRouter = require("./router/notes.router");
 const usersRouter = require("./router/users.router");
-const ecommUsersRouter = require("./router/users-ecomm.router");
 const SocialUsersRouter = require("./router/socialUsers.router");
 const PostsRouter = require("./router/posts.router");
 const bodyParser = require("body-parser");
@@ -30,7 +30,6 @@ initializeDBConnection();
 app.use("/productsListingPage", productsRouter);
 app.use("/videos", videosRouter)
 app.use("/users", usersRouter)
-app.use("/users-ecomm",ecommUsersRouter)
 app.use("/users-social",SocialUsersRouter);
 
 
@@ -42,6 +41,7 @@ app.use("/posts",PostsRouter);
 //Ecomm private routes
 app.use("/cart", cartRouter);
 app.use("/wishlist", wishlistRouter);
+app.use("/orders",ordersRouter);
 
 //Video Lib private routes
 app.use("/likedVideos", likedVideosRouter)
