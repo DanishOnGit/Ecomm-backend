@@ -57,6 +57,8 @@ const checkAuthentication = async (req, res) => {
         success: true,
         token: token,
         userId: user._id,
+        usersName:user.name,
+        usersEmail:user.email
       });
     }
     res.status(401).json({ success: false, message: "Password is incorrect" });

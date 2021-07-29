@@ -5,6 +5,7 @@ const { initializeDBConnection } = require("./db/db.connect");
 const productsRouter = require("./router/products.router");
 const cartRouter = require("./router/cart.router");
 const wishlistRouter = require("./router/wishlist.router");
+const addressRouter = require("./router/address.router");
 const ordersRouter = require("./router/orders.router");
 const videosRouter = require("./router/videos.router");
 const likedVideosRouter = require("./router/likedVideos.router");
@@ -41,6 +42,7 @@ app.use("/posts",PostsRouter);
 //Ecomm private routes
 app.use("/cart", cartRouter);
 app.use("/wishlist", wishlistRouter);
+app.use("/address", addressRouter);
 app.use("/orders",ordersRouter);
 
 //Video Lib private routes

@@ -25,12 +25,12 @@ const addNewNote = async (req, res) => {
     const NewNote = new Note({...noteData,userId});
     const savedNote = await NewNote.save();
     res.status(201).json({ success: true, note: savedNote });
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({
       success: false,
       message: "Something went wrong!",
-      errMessage: err.message,
+      errMessage: error.message,
     });
   }
 };
